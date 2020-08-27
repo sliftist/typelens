@@ -179,10 +179,11 @@ export function activate(context: vscode.ExtensionContext) {
 							const isSymbolKindAllowed =
 								symbolInformation.kind === SymbolKind.Method && this.config.settings.showReferencesForMethods ||
 								symbolInformation.kind === SymbolKind.Function && this.config.settings.showReferencesForFunctions ||
-								symbolInformation.kind === SymbolKind.Property && this.config.settings.showReferencesForProperties ||
+								//symbolInformation.kind === SymbolKind.Property && this.config.settings.showReferencesForProperties ||
 								symbolInformation.kind === SymbolKind.Class && this.config.settings.showReferencesForClasses ||
-								symbolInformation.kind === SymbolKind.Interface && this.config.settings.showReferencesForInterfaces ||
-								symbolInformation.kind === SymbolKind.Variable && symbolInformation.depth === 0;
+								symbolInformation.kind === SymbolKind.Interface && this.config.settings.showReferencesForInterfaces
+								|| symbolInformation.kind === SymbolKind.Variable && symbolInformation.depth === 0
+								;
 							return isSymbolKindAllowed;
 						})
 						.map(symbolInformation => {
