@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 	class TypeLensConfiguration {
 		public blackbox: string[] = [];
 		public blackboxTitle: string = "<< called from blackbox >>";
-		public excludeself: boolean = true;
+		public excludeself: boolean = false;
 		public singular: string = "{0} reference";
 		public plural: string = "{0} references";
 		public noreferences: string = "no references found for {0}";
@@ -168,6 +168,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 					return flattenedSymbols
 						.filter(symbolInformation => {
+
+							// Just exclude all render functions, as they have invalid reference counts. In general for interfaces the references
+							//	point to all implementations AND interface, which is simply not useful. We can't detect this, but the render function is
+							//	the worst offender, so we just exclude it by name.
+							if (symbolInformation.name === "render") {
+								return false;
+							}
+
 							var knownInterest: SymbolKind[] = <SymbolKind[]>SymbolKindInterst[document.languageId];
 							if (!knownInterest) {
 								knownInterest = standardSymbolKindSet;
@@ -284,10 +292,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 						let fileMessage: string;
 						{
-							let fileAmount = new Set(nonBlackBoxedLocations.map(x => x.uri.fsPath)).size;
+							let fileAmount = new Set(nonBlackBoxedLocations.map(x => x.uri.toString())).size;
 							let s = fileAmount !== 1 ? "s" : "";
 							fileMessage = `${fileAmount} file${s}`;
-							let selfReference = nonBlackBoxedLocations.some(x => x.uri.fsPath === codeLens.uri.fsPath);
+							let selfReference = nonBlackBoxedLocations.some(x => x.uri.toString() === codeLens.uri.toString());
 							if (selfReference && fileAmount === 1) {
 								fileMessage = `local`;
 							}
