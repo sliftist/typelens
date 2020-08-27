@@ -310,8 +310,7 @@ export function activate(context: vscode.ExtensionContext) {
 						}
 						*/
 
-						if (amount === 0) return;
-
+						/*
 						if (amount == 0 && filteredLocations.length == 0 && isSameDocument && settings.decorateunused) {
 							if (this.unusedDecorations.has(codeLens.uri.fsPath)) {
 								var decorationsForFile = this.unusedDecorations.get(codeLens.uri.fsPath);
@@ -319,6 +318,7 @@ export function activate(context: vscode.ExtensionContext) {
 								this.updateDecorations(codeLens.uri);
 							}
 						}
+						*/
 						if (amount == 0 && filteredLocations.length != 0) {
 							return new CodeLens(
 								new vscode.Range(codeLens.range.start.line, codeLens.range.start.character, codeLens.range.start.line, 90000),
