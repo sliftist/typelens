@@ -22,7 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
 		SymbolKind.Function,
 		SymbolKind.Property,
 		SymbolKind.Class,
-		SymbolKind.Interface
+		SymbolKind.Interface,
+		SymbolKind.Variable
 	];
 	const cssSymbolKindSet = [SymbolKind.Method, SymbolKind.Function, SymbolKind.Property, SymbolKind.Variable];
 
@@ -142,22 +143,24 @@ export function activate(context: vscode.ExtensionContext) {
 						kind: SymbolKind;
 						name: string;
 						range: Range;
+						depth: number;
 					}[] = [];
-					const walk = (p: DocumentSymbol) => {
-						(p.children || []).forEach(p => walk(p as any));
-						flattenedSymbols.push(p);
+					const walk = (p: DocumentSymbol, depth: number) => {
+						(p.children || []).forEach(p => walk(p as any, depth + 1));
+						flattenedSymbols.push({ ...p, depth });
 					};
 
 					for (let i = 0; i < symbols.length; i++) {
 						const symbol = symbols[i];
 						if (this.isDocumentSymbol(symbol)) {
-							walk(symbol);
+							walk(symbol, 0);
 						} else {
 							if (symbol.location) {
 								flattenedSymbols.push({
 									kind: symbol.kind,
 									name: symbol.name,
-									range: symbol.location.range
+									range: symbol.location.range,
+									depth: 0,
 								});
 							}
 						}
@@ -178,7 +181,8 @@ export function activate(context: vscode.ExtensionContext) {
 								symbolInformation.kind === SymbolKind.Function && this.config.settings.showReferencesForFunctions ||
 								symbolInformation.kind === SymbolKind.Property && this.config.settings.showReferencesForProperties ||
 								symbolInformation.kind === SymbolKind.Class && this.config.settings.showReferencesForClasses ||
-								symbolInformation.kind === SymbolKind.Interface && this.config.settings.showReferencesForInterfaces;
+								symbolInformation.kind === SymbolKind.Interface && this.config.settings.showReferencesForInterfaces ||
+								symbolInformation.kind === SymbolKind.Variable && symbolInformation.depth === 0;
 							return isSymbolKindAllowed;
 						})
 						.map(symbolInformation => {
