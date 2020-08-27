@@ -12,7 +12,7 @@
     "url": "https://github.com/kisstkondoros/typelens.git"
   },
   "engines": {
-    "vscode": "^1.45.1"
+    "vscode": "1.45.0"
   },
   "keywords": [
     "references",
@@ -32,7 +32,9 @@
     "vscode:prepublish": "webpack --mode production",
     "webpack": "webpack --mode development",
     "webpack-prod": "webpack --mode production",
-    "webpack-dev": "webpack --mode development --watch"
+    "webpack-dev": "webpack --mode development --watch",
+    "package": "vsce package --out typelens.vsix",
+    "install-local": "yarn run package && code --install-extension typelens.vsix"
   },
   "contributes": {
     "commands": [
@@ -136,8 +138,8 @@
     }
   },
   "devDependencies": {
-    "@types/node": "^14.0.6",
-    "@types/vscode": "^1.45.1",
+    "@types/node": "^14.6.1",
+    "@types/vscode": "^1.45.0",
     "ts-loader": "^7.0.5",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^3.9.3",

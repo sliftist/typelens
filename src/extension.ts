@@ -275,8 +275,24 @@ export function activate(context: vscode.ExtensionContext) {
 						});
 
 						var isSameDocument = codeLens.uri == vscode.window.activeTextEditor.document.uri;
-						var message;
+
+
+						let fileMessage: string;
+						{
+							let fileAmount = new Set(nonBlackBoxedLocations.map(x => x.uri.fsPath)).size;
+							let s = fileAmount !== 1 ? "s" : "";
+							fileMessage = `${fileAmount} file${s}`;
+							let selfReference = nonBlackBoxedLocations.some(x => x.uri.fsPath === codeLens.uri.fsPath);
+							if (selfReference && fileAmount === 1) {
+								fileMessage = `local`;
+							}
+						}
+
 						var amount = nonBlackBoxedLocations.length;
+						var message;
+						let s = amount !== 1 ? "s" : "";
+						message = `${amount} ref${s}, ${fileMessage}`;
+						/*
 						if (amount == 0) {
 							message = settings.noreferences;
 							message = message.replace("{0}", codeLens.name + "");
@@ -287,6 +303,7 @@ export function activate(context: vscode.ExtensionContext) {
 							message = settings.plural;
 							message = message.replace("{0}", amount + "");
 						}
+						*/
 
 						if (amount == 0 && filteredLocations.length == 0 && isSameDocument && settings.decorateunused) {
 							if (this.unusedDecorations.has(codeLens.uri.fsPath)) {
