@@ -310,6 +310,8 @@ export function activate(context: vscode.ExtensionContext) {
 						}
 						*/
 
+						if (amount === 0) return;
+
 						if (amount == 0 && filteredLocations.length == 0 && isSameDocument && settings.decorateunused) {
 							if (this.unusedDecorations.has(codeLens.uri.fsPath)) {
 								var decorationsForFile = this.unusedDecorations.get(codeLens.uri.fsPath);
